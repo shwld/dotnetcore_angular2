@@ -37,6 +37,8 @@ namespace core_angular2
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
+            app.UseStaticFiles();
+
             app.UseMvc();
         }
     }
