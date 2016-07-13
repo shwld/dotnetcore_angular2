@@ -1,14 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using core_angular2.Models;
 
 namespace core_angular2.Controllers
 {
     [Route("api/[controller]")]
     public class ValuesController : Controller
     {
+        private DefaultContext _Db { get; set; }
+        public ValuesController(IOptions<ConfigData> optionsAccessor)
+        {
+            this._Db = DefaultContext.GetBy(optionsAccessor.Value.DefaultConnectionString);
+        }
+
         // GET api/values
         [HttpGet]
         public IEnumerable<string> Get()
@@ -20,7 +26,8 @@ namespace core_angular2.Controllers
         [HttpGet("{id}")]
         public string Get(int id)
         {
-            return "value";
+            var note = this._Db.Notes.First();
+            return $"note: id={note.Id}, name={note.Name}";
         }
 
         // POST api/values

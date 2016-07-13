@@ -45,6 +45,12 @@ namespace core_angular2
             services.AddEntityFrameworkSqlServer();
             services.AddDbContext<DefaultContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultContext")));
+
+            services.Configure<ConfigData>(options =>
+            {
+                options.DefaultConnectionString = Configuration.GetConnectionString("DefaultContext");
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
