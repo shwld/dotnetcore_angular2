@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using core_angular2.Providers;
+using core_angular2.Models;
 
 namespace core_angular2
 {
@@ -14,11 +17,20 @@ namespace core_angular2
     {
         public Startup(IHostingEnvironment env)
         {
+            var connectionStringsConfig = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("connectionStringsSettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"connectionStringsSettings.{env.EnvironmentName}.json", optional: true)
+                .Build();
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                .AddEnvironmentVariables();
+                .AddEnvironmentVariables() 
+                .AddJsonFile("connectionStringsSettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"connectionStringsSettings.{env.EnvironmentName}.json", optional: true)
+                .AddEntityFrameworkConfig(options =>
+                    options.UseSqlServer(connectionStringsConfig.GetConnectionString("DefaultContext")));
             Configuration = builder.Build();
         }
 
@@ -29,6 +41,10 @@ namespace core_angular2
         {
             // Add framework services.
             services.AddMvc();
+
+            services.AddEntityFrameworkSqlServer();
+            services.AddDbContext<DefaultContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultContext")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
