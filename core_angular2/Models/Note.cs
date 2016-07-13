@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace core_angular2.Models
 {
+    [Table("Notes")]
     public class Note
     {
         [Required, Key]
